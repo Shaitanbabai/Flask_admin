@@ -66,6 +66,6 @@ if __name__ == '__main__':
 
     # Исправление ошибки, если Drone запускается на порту 5000
     # через терминал запускаем flask
-    # python -m flask --app "ПУТЬ_ДО_ФАЙЛА" run --port=5001
+    # python -m flask --admin_panel "ПУТЬ_ДО_ФАЙЛА" run --port=5001
 
-    # python -m flask --app "drone.py" run --port=5001
+    # python -m flask --admin_panel "drone.py" run --port=5001
