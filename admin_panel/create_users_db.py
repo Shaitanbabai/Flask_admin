@@ -20,24 +20,24 @@ def create_db():
         with app.app_context():
             # if not db.engine.connect().connection.execute(
             #         f"SELECT name FROM sqlite_master WHERE type='table' AND name='users';").fetchone():
-            db.create_all()
+           db.create_all()
 
-            # Создание администратора
-            admin_user = User.query.filter_by(username='admin').first()
-            if not admin_user:
-                hashed_password = hash_password('SitkaCharlie273')
-                admin_user = User(
+                # Создание администратора
+        admin_user = User.query.filter_by(username='admin').first()
+        if not admin_user:
+            hashed_password = hash_password('SitkaCharlie273')
+            admin_user = User(
                     username='admin',
                     email='shrion@yandex.ru',
                     password=hashed_password,
                     role='Admin',
                     status='Active'
                 )
-                db.session.add(admin_user)
-                db.session.commit()
-                print("Пользователь-администратор успешно добавлен.")
-            else:
-                print("Пользователь-администратор уже существует.")
+            db.session.add(admin_user)
+            db.session.commit()
+            print("Пользователь-администратор успешно добавлен.")
+        else:
+            print("Пользователь-администратор уже существует.")
 
 if __name__ == "__main__":
     create_db()
