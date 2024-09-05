@@ -1,5 +1,5 @@
 import logging
-from admin_panel import db, login_manager
+from admin_panel import login_manager
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 metadata = MetaData()
 
 # Инициализация SQLAlchemy с использованием настроенного MetaData
-db = SQLAlchemy(metadata=metadata)
+db = SQLAlchemy()
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -30,7 +30,7 @@ def load_user(user_id):
 
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'user'
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False, index=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)

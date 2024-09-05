@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from dotenv import load_dotenv
+from admin_panel.utils import create_instance_folder
 
 # Загрузка переменных окружения
 load_dotenv()
@@ -26,7 +27,7 @@ class Config:
 
 def create_app():
     """Функция для создания и настройки экземпляра Flask приложения."""
-    flask_app = Flask(__name__)
+    flask_app = Flask(__name__, instance_relative_config=True)
     flask_app.config.from_object(Config)
 
     if not flask_app.config['SECRET_KEY']:
@@ -63,7 +64,10 @@ def create_app():
         logger.error("Ошибка при импорте маршрутов: %s", error)
         raise
 
+    create_instance_folder(flask_app)
+
     return flask_app
+
 
 # Инициализация приложения
 app = create_app()
