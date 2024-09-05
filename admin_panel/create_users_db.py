@@ -1,7 +1,6 @@
 import os
 from admin_panel import create_app, db, bcrypt
 from admin_panel.models import User
-from .utils import create_instance_folder  # Импортируем функцию из utils.py
 
 
 def hash_password(password):
@@ -11,23 +10,20 @@ def hash_password(password):
 def create_db():
     app = create_app()
 
-    # Создаем папку instance
-    create_instance_folder(app)
+    # Определяем путь к базе данных
+    db_path = os.path.join(app.instance_path, 'users.db')
 
-    # Убедитесь, что директория instance существует внутри admin_panel
-    instance_path = os.path.join(app.root_path, 'instance')
-
-    if not os.path.exists(instance_path):
-        os.makedirs(instance_path)
-
-    # Установите путь к базе данных в админ панели
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(instance_path, "users.db")}'
+    # Конфигурируем SQLAlchemy с использованием db_path
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    db.init_app(app)
 
     with app.app_context():
+        # Проверяем существование таблицы
         if not db.engine.connect().connection.execute(
-                'SELECT name FROM sqlite_master WHERE type="table" AND name="user";').fetchone():
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='users';").fetchone():
             db.create_all()
 
+            # Создание администратора
             admin_user = User.query.filter_by(username='admin').first()
             if not admin_user:
                 hashed_password = hash_password('SitkaCharlie273')
