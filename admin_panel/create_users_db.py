@@ -12,15 +12,14 @@ def create_db():
 
     # Определяем путь к базе данных
     db_path = os.path.join(app.instance_path, 'users.db')
-
     # Конфигурируем SQLAlchemy с использованием db_path
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
-    db.init_app(app)
+    # app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
+    # db.init_app(app)
 
-    with app.app_context():
-        # Проверяем существование таблицы
-        if not db.engine.connect().connection.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='users';").fetchone():
+    if not os.path.exists(db_path):  # Проверяем существование таблицы
+        with app.app_context():
+            # if not db.engine.connect().connection.execute(
+            #         f"SELECT name FROM sqlite_master WHERE type='table' AND name='users';").fetchone():
             db.create_all()
 
             # Создание администратора
