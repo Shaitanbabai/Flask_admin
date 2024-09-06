@@ -25,10 +25,10 @@ def create_db():
                 # Создание администратора
         admin_user = User.query.filter_by(username='admin').first()
         if not admin_user:
-            hashed_password = hash_password('SitkaCharlie273')
+            hashed_password = hash_password('MyFuckingSecretPassword')
             admin_user = User(
                     username='admin',
-                    email='shrion@yandex.ru',
+                    email='ex-hosted@yandex.ru',
                     password=hashed_password,
                     role='Admin',
                     status='Active'
