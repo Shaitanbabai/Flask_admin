@@ -27,7 +27,7 @@ class Config:
 
 def create_app():
     """Функция для создания и настройки экземпляра Flask приложения."""
-    flask_app = Flask(__name__, instance_relative_config=True)  # , instance_relative_config=True
+    flask_app = Flask(__name__, instance_relative_config=True)
     flask_app.config.from_object(Config)
 
     if not flask_app.config['SECRET_KEY']:
@@ -63,6 +63,10 @@ def create_app():
     except ImportError as error:
         logger.error("Ошибка при импорте маршрутов: %s", error)
         raise
+
+    # Создание таблиц в базе данных
+    with flask_app.app_context():
+        db.create_all()
 
     create_instance_folder(flask_app)
 

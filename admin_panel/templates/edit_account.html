@@ -13,10 +13,10 @@
             {{ message }}
           {% endfor %}
         </div>
-        <a href="{{ url_for('account') }}" class="btn btn-primary">Вернуться в профиль</a>
+        <a href="{{ url_for('main.account') }}" class="btn btn-primary">Вернуться в профиль</a>
       {% endif %}
     {% endwith %}
-    <form method="POST" action="{{ url_for('edit_account') }}">
+    <form method="POST" action="{{ url_for('main.edit_account') }}">
         {{ form.hidden_tag() }}
         <div>
             {{ form.username.label }}<br>

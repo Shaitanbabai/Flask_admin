@@ -20,7 +20,7 @@ def admin_required(f):
 
 @main.errorhandler(403)
 def access_denied(e):
-    return render_template('403.html', message="Access denied"), 403
+    return render_template('403.html', message="Access denied", user=current_user), 403
 
 # Главная страница
 @main.route('/')
@@ -35,13 +35,39 @@ def register():
         return redirect(url_for('main.home'))
 
     form = RegistrationForm()
+
     if form.validate_on_submit():
+        # Захешируем пароль
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        user = User(username=form.username.data, email=form.email.data, password=hashed_password, role='User', status='Inactive')
+
+        # Проверяем, есть ли уже пользователи в базе данных
+        if User.query.count() == 0:
+            # Первый пользователь становится администратором и активным
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                password=hashed_password,
+                role='Admin',
+                status='Active'
+            )
+            flash('Первый пользователь зарегистрирован как администратор.', 'success')
+        else:
+            # Все остальные пользователи — обычные юзеры с неактивным статусом
+            user = User(
+                username=form.username.data,
+                email=form.email.data,
+                password=hashed_password,
+                role='User',
+                status='Inactive'
+            )
+            flash('Вы успешно зарегистрировались. Дождитесь активации администратором.', 'success')
+
+        # Сохраняем пользователя в базу данных
         db.session.add(user)
         db.session.commit()
-        flash('Вы успешно зарегистрировались. Дождитесь активации администратором.', 'success')
+
         return redirect(url_for('main.login'))
+
     return render_template('register.html', form=form)
 
 # Вход в аккаунт
@@ -58,7 +84,8 @@ def login():
             return redirect(url_for('main.home'))
         else:
             flash('Введены неверные данные', 'danger')
-            return render_template('login.html', form=form)
+
+    return render_template('login.html', form=form)
 
 # Выход из аккаунта
 @main.route('/logout')
@@ -109,13 +136,14 @@ def list_users():
     return render_template("users.html", users=users)
 
 # Обновление информации о пользователе (доступно только администраторам)
-@main.route("/user/<int:user_id>/update", methods=["POST"])
+@main.route("/user/<int:user_id>/update", methods=["POST", "PUT"])
 @admin_required
 @login_required
 def update_user(user_id):
     """Обновление информации о пользователе, доступно только администраторам."""
     user = User.query.get_or_404(user_id)
-    data = request.form
+    data = request.get_json()  # Теперь используем get_json для получения данных
+
     role = data.get('role')
     status = data.get('status')
 
@@ -126,4 +154,4 @@ def update_user(user_id):
 
     db.session.commit()
     flash('Информация о пользователе обновлена', 'success')
-    return redirect(url_for('list_users'))
+    return jsonify({"success": True}), 200

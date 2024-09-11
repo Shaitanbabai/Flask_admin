@@ -1,5 +1,5 @@
 import logging
-from admin_panel import login_manager
+from admin_panel import login_manager, db
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 metadata = MetaData()
 
 # Инициализация SQLAlchemy с использованием настроенного MetaData
-db = SQLAlchemy()
+# db = SQLAlchemy()
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
